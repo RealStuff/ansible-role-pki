@@ -1,0 +1,19 @@
+---
+
+# https://www.unix.com/man-page/centos/8/update-ca-trust/
+
+- name: Include defaults {{ansible_os_family}}
+  include_vars:
+    file: "{{ansible_os_family}}.yml"
+
+- name: Uninstall Root Certificate (RedHat)
+  become: yes
+  block:
+  - name: Delete the certificate (RedHat)
+    file:
+      path: "{{pki_ca_cert_dst_path | default(pki_ca_cert_dst_path_default)}}"
+      state: absent
+
+  - name: Update CA Trust (Red Hat)
+    command: update-ca-trust extract
+

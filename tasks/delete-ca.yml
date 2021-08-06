@@ -1,0 +1,18 @@
+- name: Delete CA
+  delegate_to: localhost
+  run_once: true
+  block:
+    - name: Remove Private-Key
+      file:
+        name: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_key_ext}}"
+        state: absent
+
+    - name: Remove Root-Certificate
+      file:
+        name: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+        state: absent
+
+    - name: Remove Root-Certificate CSR
+      file:
+        name: "{{pki_ca_src_path}}/{{pki_ca_name}}.csr"
+        state: absent

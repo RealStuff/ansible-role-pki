@@ -1,0 +1,6 @@
+---
+
+# RedHat
+pki_ca_cert_dst_path_default: "/etc/pki/ca-trust/source/anchors"
+pki_cert_cert_dst_path_default: "/etc/pki/tls/certs"
+pki_cert_key_dst_path_default: "/etc/pki/tls/private"

@@ -1,0 +1,6 @@
+---
+
+# Debian
+pki_ca_cert_dst_path_default: "/usr/local/share/ca-certificates"
+pki_cert_cert_dst_path_default: "/etc/ssl/localcerts"
+pki_cert_key_dst_path_default: "/etc/ssl/localcerts"

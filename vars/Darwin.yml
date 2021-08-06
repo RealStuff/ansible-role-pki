@@ -1,0 +1,5 @@
+---
+
+# Darwin
+pki_cert_cert_dst_path_default: "/etc/ssl/certs"
+pki_cert_key_dst_path_default: "/etc/ssl/certs"

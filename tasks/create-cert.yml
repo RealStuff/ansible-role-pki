@@ -1,0 +1,51 @@
+- name: Create server-certificates
+  delegate_to: localhost
+  block:
+    - name: Create directory for server certificates
+      #delegate_to: localhost
+      file:
+        path: "{{pki_cert_src_path}}"
+        state: directory
+
+    - name: Generate server private key
+      #delegate_to: localhost
+      openssl_privatekey:
+        path: "{{pki_cert_src_path}}/{{pki_cert_name}}.{{pki_cert_key_ext}}"
+        size: "{{pki_cert_cipher_size}}"
+        passphrase: "{{pki_cert_key_password | default(omit)}}"
+        cipher: "{{pki_cert_key_cipher | default(omit)}}"
+        force: "{{ pki_cert_force }}"
+        group: "{{ pki_cert_src_group | default('staff')}}"
+        mode: "{{ pki_cert_src_key_mode | default('640')}}"
+
+    - name: Create CSR for server certificate
+      #delegate_to: localhost
+      openssl_csr:
+        path: "{{pki_cert_src_path}}/{{pki_cert_name}}.csr"
+        privatekey_path: "{{pki_cert_src_path}}/{{pki_cert_name}}.{{pki_cert_key_ext}}"
+        country_name: "{{pki_cert_properties.country_name}}"
+        state_or_province_name: "{{pki_cert_properties.state_or_province_name}}"
+        locality_name: "{{pki_cert_properties.locality_name}}"
+        organization_name: "{{pki_cert_properties.organization_name}}"
+        organizational_unit_name: "{{pki_cert_properties.organizational_unit_name}}"
+        common_name: "{{pki_cert_properties.common_name}}"
+        email_address: "{{pki_cert_properties.email_address}}"
+        subject_alt_name: "{{pki_cert_properties.subject_alt_name}}"
+
+    - name: Create Certificate for server {{ansible_hostname}}, signed by {{ssl_ca_name}}
+      #delegate_to: localhost
+      openssl_certificate:
+        path: "{{pki_cert_src_path}}/{{pki_cert_name}}.{{pki_cert_cert_ext}}"
+        csr_path: "{{pki_cert_src_path}}/{{pki_cert_name}}.csr"
+        ownca_path: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+        ownca_privatekey_path: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_key_ext}}"
+        ownca_privatekey_passphrase: "{{pki_ca_key_password}}"
+        provider: ownca
+        ownca_not_after: "+{{pki_cert_expire_after_days}}d"
+        group: "{{ pki_cert_src_group | default('staff')}}" # By default, the module uses wheel. This breaks mac!
+
+    - name: Delete CSR for server {{inventory_hostname}}
+      #delegate_to: localhost
+      file:
+        path: "{{pki_cert_src_path}}/{{pki_cert_name}}.csr"
+        state: absent

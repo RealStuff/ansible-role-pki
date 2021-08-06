@@ -1,0 +1,35 @@
+---
+
+# https://manuals.gfi.com/en/kerio/connect/content/server-configuration/ssl-certificates/adding-trusted-root-certificates-to-the-server-1605.html
+
+- name: Include defaults {{ansible_os_family}}
+  include_vars:
+    file: "{{ansible_os_family}}.yml"
+
+- name: Install CA-Certificate (RedHat)
+  become: yes
+  block:
+    - name: Make sure the folder exists (Red Hat)
+      file:
+        path: "{{pki_ca_cert_dst_path | default(pki_ca_cert_dst_path_default)}}"
+        state: directory
+
+    - name: Enable update CA Trust (Red Hat)
+      command: update-ca-trust force-enable
+
+    - name: Copy PEM into folder (Red Hat)
+      copy:
+        src: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+        dest: "{{pki_ca_cert_dst_path | default(pki_ca_cert_dst_path_default)}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+        owner: "{{pki_ca_cert_owner | default(omit)}}"
+        group: "{{pki_ca_cert_owner | default(omit)}}"
+        mode: "{{pki_ca_cert_mode}}"
+      register: result
+    - debug:
+        var: result
+        verbosity: 2
+
+    - name: Extract CA Trust (Red Hat)
+      command: update-ca-trust extract
+      when: result.changed == true
+

@@ -1,0 +1,32 @@
+---
+
+# https://manuals.gfi.com/en/kerio/connect/content/server-configuration/ssl-certificates/adding-trusted-root-certificates-to-the-server-1605.html
+
+- name: Include defaults {{ansible_os_family}}
+  include_vars:
+    file: "{{ansible_os_family}}.yml"
+
+- name: Install CA-Certificate (Debian)
+  become: yes
+  block:
+    - name: Make sure the folder exists (Debian)
+      file:
+        path: "{{pki_ca_cert_dst_path | default(pki_ca_cert_dst_path_default)}}"
+        state: directory
+
+    - name: Copy CA-Cert into folder (Debian)
+      copy:
+        src: "{{pki_cert_src_path}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+        dest: "{{pki_ca_cert_dst_path | default(pki_ca_cert_dst_path_default)}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+        owner: "{{pki_ca_cert_owner | default(omit)}}"
+        group: "{{pki_ca_cert_owner | default(omit)}}"
+        mode: "{{pki_ca_cert_mode}}"
+      register: result_cp_debian_ca_cert
+    - debug:
+        var: result_cp_debian_ca_cert
+        verbosity: 2
+
+    - name: Update CA store (Debian)
+      command: update-ca-certificates
+      when: result_cp_debian_ca_cert.changed == true
+

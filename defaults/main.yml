@@ -1,0 +1,35 @@
+
+### OS - Independent defaults
+pki_state: present
+## CA
+pki_ca_force: no # Used to renew private-key and cert or to delete CA
+pki_ca_src_path: "{{playbook_dir}}/files/ssl/CA"
+pki_ca_name: "{{pki_ca_properties.common_name}}"
+pki_ca_cipher_type: auto
+pki_ca_cipher_size: 4096
+pki_ca_expire_after_days: 1095
+
+# Cert
+pki_ca_cert_mode: 0644
+pki_ca_cert_ext: crt
+pki_ca_key_ext: key
+
+## Server
+pki_cert_force: no # Used to renew private-key and cert or to delete certificates
+pki_cert_src_path: "{{playbook_dir}}/files/ssl/certs"
+pki_cert_name: "{{inventory_hostname}}"
+pki_cert_cipher_size: 4096
+pki_cert_expire_after_days: 365
+# Cert
+pki_cert_cert_mode: 0644
+#pki_cert_cert_owner:
+#pki_cert_cert_group:
+pki_cert_cert_ext: crt
+# Key
+#pki_cert_key_password:
+#pki_cert_key_cipher:
+pki_cert_key_mode: 0644
+#pki_cert_key_owner:
+#pki_cert_key_group:
+pki_cert_key_ext: key
+

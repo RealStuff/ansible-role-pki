@@ -1,0 +1,34 @@
+---
+- name: Include defaults {{ansible_os_family}}
+  include_vars:
+    file: "{{ansible_os_family}}.yml"
+
+- name: Install server ssl-certificate/key pair
+  become: yes
+  block:
+    - name: Make sure the key folder exists ({{ansible_os_family}})
+      file:
+        path: "{{pki_cert_key_dst_path | default(pki_cert_key_dst_path_default)}}"
+        state: directory
+
+    - name: Copy server ssl-key ({{ansible_os_family}})
+      copy:
+        src: "{{pki_cert_src_path}}/{{pki_cert_name}}.{{pki_cert_key_ext}}"
+        dest: "{{pki_cert_key_dst_path | default(pki_cert_key_dst_path_default)}}/{{pki_cert_name}}.{{pki_cert_key_ext}}"
+        owner: "{{pki_cert_key_owner | default(omit)}}"
+        group: "{{pki_cert_key_owner | default(omit)}}"
+        mode: "{{pki_cert_key_mode}}"
+
+    - name: Make sure the cert folder exists ({{ansible_os_family}})
+      file:
+        path: "{{pki_cert_cert_dst_path | default(pki_cert_cert_dst_path_default)}}"
+        state: directory
+
+    - name: Copy server ssl-cert ({{ansible_os_family}})
+      copy:
+        src: "{{pki_cert_src_path}}/{{pki_cert_name}}.{{pki_cert_cert_ext}}"
+        dest: "{{pki_cert_cert_dst_path | default(pki_cert_cert_dst_path_default)}}/{{pki_cert_name}}.{{pki_cert_cert_ext}}"
+        owner: "{{pki_cert_cert_owner | default(omit)}}"
+        group: "{{pki_cert_cert_owner | default(omit)}}"
+        mode: "{{pki_cert_cert_mode}}"
+      register: result

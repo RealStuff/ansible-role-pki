@@ -1,0 +1,35 @@
+
+- name: State present
+  block:
+  - name: Create CA
+    import_tasks: create-ca.yml
+    run_once: true
+
+  - name: Create certificates
+    import_tasks: create-cert.yml
+
+  - name: Install CA certificate
+    include_tasks: "{{ansible_os_family}}/install-cacert.yml"
+
+  - name: Install server certificates
+    include_tasks: "install-cert.yml"
+  when: pki_state == 'present'
+
+# Uninstall
+- name: State absent
+  block:
+    - name: Delete CA
+      when: pki_ca_force == True
+      import_tasks: delete-ca.yml
+
+    - name: Delete certificates
+      import_tasks: delete-cert.yml
+      delegate_to: localhost
+
+    - name: Uninstall CA certificate
+      when: pki_ca_force == True
+      include_tasks: "{{ansible_os_family}}/uninstall-cacert.yml"
+
+    - name: Uninstall server certificate and key
+      include_tasks: "uninstall-cert.yml"
+  when: pki_state == 'absent'

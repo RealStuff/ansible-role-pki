@@ -1,0 +1,71 @@
+---
+- name: Creates a CA consisting of a key and certificate
+  delegate_to: localhost
+  block:
+    - name: Create ssl directory
+      file:
+        path: "{{pki_ca_src_path}}"
+        state: directory
+
+    - name: Generate an OpenSSL private key with the default values (4096 bits, RSA) and a passphrase
+      openssl_privatekey:
+        # Module settings
+        select_crypto_backend: cryptography
+        # Outout
+        path: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_key_ext}}"
+        # Settings
+        passphrase: "{{pki_ca_key_password}}"
+        cipher: "{{pki_ca_cipher_type}}"
+        size: "{{pki_ca_cipher_size}}"
+        force: "{{ pki_ca_force }}"
+
+    - name: Create CSR for Root Certificate
+      openssl_csr:
+        # Module settings
+        select_crypto_backend: cryptography
+        # Input
+        privatekey_path: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_key_ext}}"
+        privatekey_passphrase: "{{pki_ca_key_password}}"
+        # Output
+        path: "{{pki_ca_src_path}}/{{pki_ca_name}}.csr"
+        # Subject attributes
+        country_name: "{{pki_ca_properties.country_name}}"
+        state_or_province_name: "{{pki_ca_properties.state_or_province_name}}"
+        locality_name: "{{pki_ca_properties.locality_name}}"
+        organization_name: "{{pki_ca_properties.organization_name}}"
+        organizational_unit_name: "{{pki_ca_properties.organizational_unit_name}}"
+        common_name: "{{pki_ca_properties.common_name}}"
+        email_address: "{{pki_ca_properties.email_address}}"
+        subject_alt_name: "{{pki_ca_properties.subject_alt_name}}"
+
+        # Constraint settings
+        basic_constraints:
+        - "CA:TRUE"
+        basic_constraints_critical: yes
+          
+        # Purposes
+        key_usage:
+          - cRLSign
+          - digitalSignature
+          - keyCertSign
+
+    - name: Generate the Root Certificate
+      openssl_certificate:
+        # Module settings
+        select_crypto_backend: cryptography
+        # Input
+        path: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+        privatekey_path: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_key_ext}}"
+        privatekey_passphrase: "{{pki_ca_key_password}}"
+        # Output
+        csr_path: "{{pki_ca_src_path}}/{{pki_ca_name}}.csr"
+        # Selfsigned
+        provider: selfsigned
+        # Lifetime
+        selfsigned_not_after: "+{{pki_ca_expire_after_days}}d"
+
+    # Cleanup
+    - name: Delete CSR for root-certificate
+      file:
+        path: "{{pki_ca_src_path}}/{{pki_ca_name}}.csr"
+        state: absent

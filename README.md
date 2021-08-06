@@ -24,10 +24,9 @@ Create a playbook and import/include the role. The easiest way is to use galaxy.
 ```
 # vi requirements.yml
 
-# realstuff-pki
-- src: git+https://BernhardFluehmann@bitbucket.org/realstuff/ansible-role-pki.git
-  version: "release/0.8.0"
-  #version: master
+# ansible-role-pki
+- src: git+https://github.com/realstuff/ansible-role-pki.git
+  version: master
   name: realstuff.pki
 ```
 ```
@@ -54,22 +53,22 @@ Note: pki state has no effect when single steps are executed (example: tasks_fro
       country_name: CH
       state_or_province_name: BE
       locality_name: Berne
-      organization_name: RealStuff Informatik AG
+      organization_name: ACME.inc
       organizational_unit_name: Test
-      common_name: intra.realstuff.ch
-      email_address: info@realstuff.ch
+      common_name: test.acme.com
+      email_address: test@acme.com
       subject_alt_name:
-        - DNS: intra.realstuff.ch
+        - DNS: test.acme.com
 
     # PKI Certificates
     pki_cert_properties:
       country_name: CH
       state_or_province_name: BE
       locality_name: Berne
-      organization_name: RealStuff Informatik AG
+      organization_name: ACME.inc
       organizational_unit_name: DevOps
       common_name: "{{inventory_hostname}}"
-      email_address: info@realstuff.ch
+      email_address: info@acme.com
       subject_alt_name:
         - "DNS:{{inventory_hostname}}"
         - "IP:{{ansible_default_ipv4.address}}"
@@ -125,7 +124,7 @@ Example:
       tasks_from: create-ca
       vars:
         # PKI CA certs
-        pki_ca_name: intra.realstuff.ch
+        pki_ca_name: intra.acme.ch
         pki_ca_key_password: "{{ vault_password_ca_key }}"
         pki_ca_cipher_type: auto
         pki_ca_cipher_size: 4096
@@ -134,12 +133,12 @@ Example:
         country_name: CH
         state_or_province_name: BE
         locality_name: Berne
-        organization_name: RealStuff Informatik AG
+        organization_name: ACME.inc
         organizational_unit_name: Test
-        common_name: intra.realstuff.ch
-        email_address: info@realstuff.ch
+        common_name: intra.acme.com
+        email_address: info@acme.com
         subject_alt_name:
-          - DNS: intra.realstuff.ch
+          - DNS: intra.acme.com
 ```
 
 ### Create server certificate/key ###
@@ -179,10 +178,10 @@ Example:
     country_name: CH
     state_or_province_name: BE
     locality_name: Berne
-    organization_name: RealStuff Informatik AG
+    organization_name: ACME.inc
     organizational_unit_name: DevOps
     common_name: "{{inventory_hostname}}"
-    email_address: info@realstuff.ch
+    email_address: info@acme.com
     subject_alt_name:
       - "DNS:{{inventory_hostname}}"
       - "IP:{{ansible_default_ipv4.address}}"
@@ -363,8 +362,6 @@ Any comments, contributions and documentation welcome!
 
 ## Who do I talk to? ##
 
-* Repo owner or admin bernhard.fluehmann@realstuff.ch
-* Other community or team contact mathew.thekkekara@realstuff.ch
+* Repo owner or admin bernhard.fluehmann@securix.ch
+* Other community or team contact mathew.thekkekara@securix.ch
 
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-  

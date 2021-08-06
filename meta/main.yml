@@ -1,0 +1,28 @@
+---
+dependencies: []
+
+galaxy_info:
+  role_name: pki
+  author: realstuff
+  description: PKI/Certificate management
+  company: "RealStuff Informatik AG"
+  license: "Apache"
+  min_ansible_version: 2.4
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Darwin
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - web
+    - system
+    - security
+    - pki
+    - tls
+    - CA
+    - certificate

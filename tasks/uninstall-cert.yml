@@ -1,0 +1,17 @@
+---
+- name: Include defaults {{ansible_os_family}}
+  include_vars:
+    file: "{{ansible_os_family}}.yml"
+
+- name: Unstall server certificate and key ({{ansible_os_family}})
+  become: yes
+  block:
+    - name: Uninstall key ({{ansible_os_family}})
+      file:
+        path: "{{pki_cert_key_dst_path | default(pki_cert_key_dst_path_default)}}/{{pki_cert_name}}.{{pki_cert_key_ext}}"
+        state: absent
+
+    - name: Uninstall certificate ({{ansible_os_family}})
+      file:
+        path: "{{pki_cert_cert_dst_path | default(pki_cert_cert_dst_path_default)}}/{{pki_cert_name}}.{{pki_cert_cert_ext}}"
+        state: absent

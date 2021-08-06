@@ -1,0 +1,36 @@
+---
+
+# https://manuals.gfi.com/en/kerio/connect/content/server-configuration/ssl-certificates/adding-trusted-root-certificates-to-the-server-1605.html
+
+- name: Include defaults {{ansible_os_family}}
+  include_vars:
+    file: "{{ansible_os_family}}.yml"
+
+- name: Copy certificate to temporary location (Darwin)
+  copy:
+    src: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+    dest: "{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+
+- name: Check if certificate with same lable exist
+  #command: security find-certificate  -a -c {{pki_ssl_ca_properties.common_name}}} /Library/Keychains/System.keychain | awk -F'"' '/labl/{print $4}' 
+  # Just search for one certificate
+  shell: security find-certificate -c {{pki_ca_properties.common_name}} /Library/Keychains/System.keychain | awk -F'"' '/labl/{print $4}' 
+  register: ca_cert_cn
+- debug:
+    var: ca_cert_cn.stdout
+    verbosity: 2
+
+# If a CA certificate with the same common name already exists, delete it. This is a bit tricky, but common names should be unique.
+- name: Uninstall Root Certificate (Darwin)
+  become: yes
+  command: security delete-certificate -c "{{pki_ca_properties.common_name}}"
+  when: ca_cert_cn.stdout == pki_ca_properties.common_name
+
+- name: Add certificate to Mac OS keychain (Darwin)
+  command: security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" "{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+  become: yes
+
+- name: Remove temporary certificate (Darwin)
+  file:
+    path: "{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+    state: absent

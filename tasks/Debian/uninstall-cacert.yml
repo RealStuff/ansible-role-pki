@@ -1,0 +1,19 @@
+---
+
+# https://manuals.gfi.com/en/kerio/connect/content/server-configuration/ssl-certificates/adding-trusted-root-certificates-to-the-server-1605.html
+
+- name: Include defaults {{ansible_os_family}}
+  include_vars:
+    file: "{{ansible_os_family}}.yml"
+
+- name: Uninstall Root Certificate (Debian)
+  become: yes
+  block:
+  - name: Delete the certificate (Debian)
+    file:
+      path: "{{pki_ca_cert_dst_path}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+      state: absent
+
+  - name: Update CA Trust (Debian)
+    command: sudo update-ca-certificates --fresh
+

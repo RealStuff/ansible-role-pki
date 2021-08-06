@@ -1,0 +1,15 @@
+
+- name: Remove Private-Key
+  file:
+    name: "{{pki_cert_src_path}}/{{pki_cert_name}}.{{pki_cert_key_ext}}"
+    state: absent
+
+- name: Remove Certificate
+  file:
+    name: "{{pki_cert_src_path}}/{{pki_cert_name}}.{{pki_cert_cert_ext}}"
+    state: absent
+
+- name: Remove Certificate CSR
+  file:
+    name: "{{pki_cert_src_path}}/{{pki_cert_name}}.csr"
+    state: absent
