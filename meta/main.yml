@@ -3,9 +3,9 @@ dependencies: []
 
 galaxy_info:
   role_name: pki
-  author: realstuff
+  author: securix
   description: PKI/Certificate management
-  company: "RealStuff Informatik AG"
+  company: "Securix AG"
   license: "Apache"
   min_ansible_version: 2.4
   platforms:

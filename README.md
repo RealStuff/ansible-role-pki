@@ -27,7 +27,7 @@ Create a playbook and import/include the role. The easiest way is to use galaxy.
 # ansible-role-pki
 - src: git+https://github.com/realstuff/ansible-role-pki.git
   version: master
-  name: realstuff.pki
+  name: securix.pki
 ```
 ```
 ansible-galaxy install -r requirements.yml --force
@@ -45,7 +45,7 @@ Note: pki state has no effect when single steps are executed (example: tasks_fro
 - name: PKI, make sure CA cert and key exist, create certs/keys for all servers and installs CA-Cert and server cert/key pairs on servers
   hosts: all
   roles:
-    - realstuff.pki
+    - securix.pki
   vars:
     # PKI CA certs
     pki_ca_key_password: "{{ vault_password_ca_key }}"
@@ -80,7 +80,7 @@ Note: By default, local CA cert and key are not uninstalled. Use ```pki_ca_force
 - name: PKI, Uninstall and delete certs/keys and delete them from local cirectory.
   hosts: all
   roles:
-    - realstuff.pki
+    - securix.pki
   vars:
     # Force CA uninstall
     #pki_ca_force: yes
@@ -120,7 +120,7 @@ Example:
   hosts: all
   tasks:
     - name: Create CA
-      include_tasks: realstuff.pki
+      include_tasks: securix.pki
       tasks_from: create-ca
       vars:
         # PKI CA certs
@@ -168,7 +168,7 @@ Variables:
 Example:
 ```
 - name: Create certificate
-  include_tasks: realstuff.pki
+  include_tasks: securix.pki
   tasks_from: create-cert.yml
   vars:
     # PKI Certificates
@@ -211,7 +211,7 @@ pki_ca_cert_dst_path: "/etc/pki/ca-trust/source/anchors/{{pki_ca_name}}.{{pki_ca
 Example:    
 ```
 - name: Install custom ca-cert
-  include_tasks: realstuff.pki
+  include_tasks: securix.pki
   tasks_from: "{{ansible_os_family}}/install-cacert.yml"
   vars:
     pki_ca_name: acme.com
@@ -248,7 +248,7 @@ pki_cert_key_dst_path: "/etc/pki/tls/private/{{pki_cert_name}}.{{pki_cert_key_ex
 Example:    
 ```
 - name: Install custom-certificate
-  include_tasks: realstuff.pki
+  include_tasks: securix.pki
   tasks_from: "{{ansible_os_family}}/install-cert.yml"
   vars:
     pki_cert_name: star.acme.com
@@ -266,7 +266,7 @@ Variables:
 Example:    
 ```
 - name: Delete CA
-  include_tasks: realstuff.pki
+  include_tasks: securix.pki
   tasks_from: "delete-ca.yml"
   vars:
     pki_ca_force: yes
@@ -285,7 +285,7 @@ Variables:
 
 ```
 - name: Delete custom certificate/key
-  include_tasks: realstuff.pki
+  include_tasks: securix.pki
   tasks_from: "delete-cert.yml"
   vars:
     pki_cert_name: star.acme.com
@@ -312,7 +312,7 @@ pki_ca_cert_dst_path: "/etc/pki/ca-trust/source/anchors/{{pki_ca_name}}.{{pki_ca
 Example:    
 ```
 - name: Uninstall CA
-  include_tasks: realstuff.pki
+  include_tasks: securix.pki
   tasks_from: "{{ansible_os_family}}/uninstall-cacert.yml"
 ```
 
@@ -343,7 +343,7 @@ pki_cert_key_dst_path: "/etc/pki/tls/private/{{pki_cert_name}}.{{pki_cert_key_ex
 Example:    
 ```
 - name: Uninstall certificate
-  include_tasks: realstuff.pki
+  include_tasks: securix.pki
   tasks_from: "{{ansible_os_family}}/uninstall-cert.yml"
 ```
 
