@@ -11,8 +11,9 @@
       openssl_privatekey:
         # Module settings
         select_crypto_backend: cryptography
-        # Outout
+        # Output
         path: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_key_ext}}"
+        mode: "{{ pki_ca_key_mode }}"
         # Settings
         passphrase: "{{pki_ca_key_password}}"
         cipher: "{{pki_ca_cipher_type}}"
@@ -55,6 +56,7 @@
         select_crypto_backend: cryptography
         # Input
         path: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_cert_ext}}"
+        mode: "{{ pki_ca_cert_mode }}"
         privatekey_path: "{{pki_ca_src_path}}/{{pki_ca_name}}.{{pki_ca_key_ext}}"
         privatekey_passphrase: "{{pki_ca_key_password}}"
         # Output

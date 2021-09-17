@@ -6,6 +6,8 @@
       file:
         path: "{{pki_cert_src_path}}"
         state: directory
+        mode: "{{ pki_cert_src_path_mode }}"
+        group: "{{ pki_cert_src_path_group }}"
 
     - name: Generate server private key
       #delegate_to: localhost
@@ -43,6 +45,7 @@
         provider: ownca
         ownca_not_after: "+{{pki_cert_expire_after_days}}d"
         group: "{{ pki_cert_src_group | default('staff')}}" # By default, the module uses wheel. This breaks mac!
+        mode: "{{ pki_cert_src_cert_mode | default('640')}}"
 
     - name: Delete CSR for server {{inventory_hostname}}
       #delegate_to: localhost

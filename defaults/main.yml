@@ -12,14 +12,20 @@ pki_ca_expire_after_days: 1095
 # Cert
 pki_ca_cert_mode: 0644
 pki_ca_cert_ext: crt
+
+# Key
+pki_ca_key_mode: 0640
 pki_ca_key_ext: key
 
 ## Server
 pki_cert_force: no # Used to renew private-key and cert or to delete certificates
 pki_cert_src_path: "{{playbook_dir}}/files/ssl/certs"
+pki_cert_src_path_group: wheel 
+pki_cert_src_path_mode: 0644
 pki_cert_name: "{{inventory_hostname}}"
 pki_cert_cipher_size: 4096
 pki_cert_expire_after_days: 365
+
 # Cert
 pki_cert_cert_mode: 0644
 #pki_cert_cert_owner:
